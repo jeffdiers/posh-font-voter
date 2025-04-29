@@ -3,11 +3,12 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { ThumbsUp, ThumbsDown, Check } from "lucide-react";
+import { ThumbsUp, ThumbsDown, Check, AlertCircle } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 import { ToastProvider } from "@/components/ui/toast";
 import { v4 as uuidv4 } from "uuid";
 import { supabase } from "@/lib/supabase";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
 // Font interface to track each font
 interface Font {
@@ -24,6 +25,8 @@ interface UserVote {
   font_id: number;
   vote_type: "up" | "down";
 }
+
+const VOTING_ENABLED = false;
 
 export default function FontVotingPage() {
   const [fonts, setFonts] = useState<Font[]>([]);
@@ -114,7 +117,7 @@ export default function FontVotingPage() {
 
   // Vote for a font (up or down)
   const voteFont = async (fontId: number, voteType: "up" | "down") => {
-    if (!userId) return;
+    if (!userId || !VOTING_ENABLED) return; // Check if voting is open
 
     // Check if user has already voted for this font
     if (userVotes[fontId]) {
@@ -247,6 +250,19 @@ export default function FontVotingPage() {
 
   return (
     <ToastProvider>
+      {!VOTING_ENABLED && (
+        <div className="container mx-auto p-4 w-1/3">
+          <Alert variant="destructive">
+            <AlertTitle className="flex items-center gap-2">
+              <AlertCircle />
+              <span>Voting is disabled</span>
+            </AlertTitle>
+            <AlertDescription>
+              Waiting for everyone to get their fonts
+            </AlertDescription>
+          </Alert>
+        </div>
+      )}
       <div className="container mx-auto py-8 px-4">
         {loading ? (
           <div className="text-center py-12">
@@ -300,6 +316,7 @@ export default function FontVotingPage() {
                         size="sm"
                         className="w-1/2 mr-2"
                         onClick={() => voteFont(font.id, "up")}
+                        disabled={!VOTING_ENABLED}
                       >
                         <ThumbsUp className="h-4 w-4 mr-2" />
                         {font.upvotes}
@@ -309,6 +326,7 @@ export default function FontVotingPage() {
                         size="sm"
                         className="w-1/2"
                         onClick={() => voteFont(font.id, "down")}
+                        disabled={!VOTING_ENABLED}
                       >
                         <ThumbsDown className="h-4 w-4 mr-2" />
                         {font.downvotes}

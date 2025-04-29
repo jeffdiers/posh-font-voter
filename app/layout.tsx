@@ -16,7 +16,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <header className="flex justify-between items-center p-4">
+          <header className="flex justify-between items-center py-4 px-12">
             <h1 className="text-2xl font-bold">Posh Font Voting</h1>
             <ModeToggle />
           </header>

@@ -1,0 +1,111 @@
+"use client";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+
+interface FontPreviewDialogProps {
+  isOpen: boolean;
+  onClose: () => void;
+  font: {
+    id: number;
+    name: string;
+    url: string;
+  } | null;
+}
+
+export function FontPreviewDialog({
+  isOpen,
+  onClose,
+  font,
+}: FontPreviewDialogProps) {
+  if (!font) return null;
+
+  return (
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="max-w-4xl">
+        <DialogHeader className="flex flex-row items-center justify-between">
+          <DialogTitle>Font Preview: {font.name}</DialogTitle>
+        </DialogHeader>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+          {/* Event Flyer Image on the left */}
+          <div className="bg-muted rounded-lg overflow-hidden flex items-center justify-center">
+            <div className="relative w-full aspect-[3/4] bg-gradient-to-br from-indigo-500 to-purple-700 flex items-center justify-center">
+              <div
+                className="absolute inset-0 flex flex-col items-center justify-center p-6 text-white text-center"
+                style={{ fontFamily: font.name }}
+              >
+                <p className="text-xl mb-2">PRESENTING</p>
+                <h2 className="text-4xl font-bold mb-4">
+                  ANNUAL DESIGN CONFERENCE
+                </h2>
+                <p className="text-lg mb-6">
+                  FEATURING THE LATEST TRENDS IN TYPOGRAPHY
+                </p>
+                <p className="text-xl">JUNE 15-18, 2023</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Font Examples on the right */}
+          <div className="flex flex-col space-y-6">
+            <div className="space-y-2">
+              <h3 className="text-sm font-medium text-muted-foreground">
+                Event Title
+              </h3>
+              <div
+                className="text-4xl font-bold"
+                style={{ fontFamily: font.name }}
+              >
+                Annual Design Conference
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <h3 className="text-sm font-medium text-muted-foreground">
+                Heading
+              </h3>
+              <div
+                className="text-2xl font-semibold"
+                style={{ fontFamily: font.name }}
+              >
+                Typography Workshop Sessions
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <h3 className="text-sm font-medium text-muted-foreground">
+                Body Text
+              </h3>
+              <div className="text-base">
+                Join us for an immersive experience exploring the art and
+                science of typography. From classic serifs to modern sans, we'll
+                dive deep into what makes great typography work.
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <h3 className="text-sm font-medium text-muted-foreground">
+                Call to Action
+              </h3>
+              <div className="text-lg font-medium">Register Now & Save 20%</div>
+            </div>
+
+            <div className="space-y-2">
+              <h3 className="text-sm font-medium text-muted-foreground">
+                Date & Location
+              </h3>
+              <div className="text-base">
+                June 15-18, 2023 • Design Center, San Francisco
+              </div>
+            </div>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}

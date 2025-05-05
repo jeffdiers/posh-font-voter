@@ -3,12 +3,19 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { ThumbsUp, ThumbsDown, Check, AlertCircle } from "lucide-react";
+import {
+  ThumbsUp,
+  ThumbsDown,
+  Check,
+  AlertCircle,
+  ExternalLink,
+} from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 import { ToastProvider } from "@/components/ui/toast";
 import { v4 as uuidv4 } from "uuid";
 import { supabase } from "@/lib/supabase";
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { Alert, AlertTitle } from "@/components/ui/alert";
+import { FontPreviewDialog } from "@/components/font-preview-dialog";
 
 // Font interface to track each font
 interface Font {
@@ -33,6 +40,8 @@ export default function FontVotingPage() {
   const [userVotes, setUserVotes] = useState<Record<number, "up" | "down">>({});
   const [userId, setUserId] = useState<string>("");
   const [loading, setLoading] = useState(true);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedFont, setSelectedFont] = useState<Font | null>(null);
 
   // Initialize user ID and fetch data
   useEffect(() => {
@@ -248,22 +257,52 @@ export default function FontVotingPage() {
     (a, b) => b.upvotes - b.downvotes - (a.upvotes - a.downvotes)
   );
 
+  const openFontPreview = (font: Font) => {
+    setSelectedFont(font);
+    setIsDialogOpen(true);
+  };
+
+  const closeFontPreview = () => {
+    setIsDialogOpen(false);
+  };
+
   return (
     <ToastProvider>
-      {!VOTING_ENABLED && (
-        <div className="container mx-auto p-4 w-1/3">
-          <Alert variant="destructive">
-            <AlertTitle className="flex items-center gap-2">
-              <AlertCircle />
-              <span>Voting is disabled</span>
-            </AlertTitle>
-            <AlertDescription>
-              Waiting for everyone to get their fonts
-            </AlertDescription>
-          </Alert>
-        </div>
-      )}
       <div className="container mx-auto py-8 px-4">
+        <div className="max-w-3xl mx-auto mb-8 text-center bg-secondary p-6 rounded-lg shadow-sm">
+          <h2 className="text-xl font-semibold mb-2">
+            Help us choose our fonts for the Create Event page!
+          </h2>
+          <p className="mb-4">
+            We're selecting fonts for our new Create Event page and need your
+            input. Vote on your favorite fonts below, and the top 8 will be
+            featured in our upcoming Create Event page.
+          </p>
+          <div className="flex flex-wrap justify-center gap-4 text-sm">
+            <div className="flex items-center">
+              <ThumbsUp className="h-4 w-4 mr-1 text-green-600" />
+              <span>Vote up fonts you love</span>
+            </div>
+            <div className="flex items-center">
+              <ThumbsDown className="h-4 w-4 mr-1 text-red-600" />
+              <span>Vote down fonts you dislike</span>
+            </div>
+            <div className="flex items-center">
+              <ExternalLink className="h-4 w-4 mr-1 text-blue-600" />
+              <span>Click to preview it in action</span>
+            </div>
+          </div>
+        </div>
+        {!VOTING_ENABLED && (
+          <div className="container mx-auto p-4 flex flex-col gap-4">
+            <Alert variant="destructive">
+              <AlertTitle className="flex items-center gap-2">
+                <AlertCircle />
+                Voting is disabled: Waiting for everyone to get their fonts
+              </AlertTitle>
+            </Alert>
+          </div>
+        )}
         {loading ? (
           <div className="text-center py-12">
             <div
@@ -280,15 +319,25 @@ export default function FontVotingPage() {
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {sortedFonts.map((font) => (
               <Card key={font.id} className="overflow-hidden">
-                <CardContent className="pt-6">
+                <CardContent className="pt-6 flex flex-col items-center gap-2">
                   <h1
-                    className="text-4xl text-center mb-4 overflow-hidden text-ellipsis"
+                    className="text-4xl text-center mb-2 overflow-hidden text-ellipsis"
                     style={{
                       fontFamily: font.loaded ? font.name : "system-ui",
                     }}
                   >
                     {font.name}
                   </h1>
+
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    className="gap-2"
+                    onClick={() => openFontPreview(font)}
+                  >
+                    <ExternalLink className="h-4 w-4" />
+                    Preview
+                  </Button>
                   <div className="text-sm text-muted-foreground text-center mb-2">
                     Net votes: {font.upvotes - font.downvotes}
                   </div>
@@ -318,7 +367,7 @@ export default function FontVotingPage() {
                         onClick={() => voteFont(font.id, "up")}
                         disabled={!VOTING_ENABLED}
                       >
-                        <ThumbsUp className="h-4 w-4 mr-2" />
+                        <ThumbsUp className="h-4 w-4 mr-2 text-green-600/50" />
                         {font.upvotes}
                       </Button>
                       <Button
@@ -328,7 +377,7 @@ export default function FontVotingPage() {
                         onClick={() => voteFont(font.id, "down")}
                         disabled={!VOTING_ENABLED}
                       >
-                        <ThumbsDown className="h-4 w-4 mr-2" />
+                        <ThumbsDown className="h-4 w-4 mr-2 text-red-600/50" />
                         {font.downvotes}
                       </Button>
                     </>
@@ -338,6 +387,12 @@ export default function FontVotingPage() {
             ))}
           </div>
         )}
+
+        <FontPreviewDialog
+          isOpen={isDialogOpen}
+          onClose={closeFontPreview}
+          font={selectedFont}
+        />
       </div>
     </ToastProvider>
   );

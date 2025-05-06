@@ -33,7 +33,7 @@ interface UserVote {
   vote_type: "up" | "down";
 }
 
-const VOTING_ENABLED = true;
+const VOTING_ENABLED = false;
 const MAX_VOTES = 8;
 
 export default function FontVotingPage() {

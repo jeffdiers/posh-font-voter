@@ -31,7 +31,7 @@ export function FontPreviewDialog({
         <DialogHeader className="flex flex-row items-center justify-between">
           <DialogTitle>Font Preview: {font.name}</DialogTitle>
         </DialogHeader>
-        <ScrollArea className="h-[80vh]">
+        <ScrollArea className="max-h-[80vh]">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
             {/* Event Flyer Image on the left */}
             <div className="bg-muted rounded-lg overflow-hidden flex items-center justify-center">

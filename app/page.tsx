@@ -336,7 +336,9 @@ export default function FontVotingPage() {
             size="sm"
             className="w-full mr-2"
             onClick={() => voteFont(font.id, "up")}
-            disabled={remainingVotes <= 0 && !userVotes[font.id]}
+            disabled={
+              (remainingVotes <= 0 && !userVotes[font.id]) || !VOTING_ENABLED
+            }
           >
             <ThumbsUp className="h-4 w-4 mr-2" />
             Vote for this font

@@ -33,7 +33,8 @@ interface UserVote {
   vote_type: "up" | "down";
 }
 
-const VOTING_ENABLED = false;
+const VOTING_ENABLED = true;
+const MAX_VOTES = 8;
 
 export default function FontVotingPage() {
   const [fonts, setFonts] = useState<Font[]>([]);
@@ -42,6 +43,10 @@ export default function FontVotingPage() {
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedFont, setSelectedFont] = useState<Font | null>(null);
+
+  // Count how many votes the user has used
+  const usedVotes = Object.keys(userVotes).length;
+  const remainingVotes = MAX_VOTES - usedVotes;
 
   // Initialize user ID and fetch data
   useEffect(() => {
@@ -135,6 +140,16 @@ export default function FontVotingPage() {
         description: `You've already voted for ${
           fonts.find((f) => f.id === fontId)?.name
         }`,
+        duration: 3000,
+      });
+      return;
+    }
+
+    // Check if user has reached the maximum number of votes
+    if (usedVotes >= MAX_VOTES && voteType === "up") {
+      toast({
+        title: "Vote limit reached",
+        description: `You can only upvote ${MAX_VOTES} fonts. Please remove a vote to continue.`,
         duration: 3000,
       });
       return;
@@ -252,11 +267,6 @@ export default function FontVotingPage() {
     }
   };
 
-  // Sort fonts by net votes (upvotes - downvotes)
-  const sortedFonts = [...fonts].sort(
-    (a, b) => b.upvotes - b.downvotes - (a.upvotes - a.downvotes)
-  );
-
   const openFontPreview = (font: Font) => {
     setSelectedFont(font);
     setIsDialogOpen(true);
@@ -266,17 +276,88 @@ export default function FontVotingPage() {
     setIsDialogOpen(false);
   };
 
+  // Sort fonts by net votes (upvotes - downvotes)
+  const sortedFonts = [...fonts].sort(
+    (a, b) => b.upvotes - b.downvotes - (a.upvotes - a.downvotes)
+  );
+
+  // Get top fonts and remaining fonts
+  const topFonts = sortedFonts.slice(0, MAX_VOTES);
+  const remainingFonts = sortedFonts.slice(MAX_VOTES);
+
+  // Render a font card
+  const renderFontCard = (font: Font) => (
+    <Card
+      key={font.id}
+      className="overflow-hidden hover:shadow-md transition-shadow duration-200"
+    >
+      <CardContent className="pt-6 flex flex-col items-center gap-2">
+        <h1
+          className="text-4xl text-center mb-2 overflow-hidden text-ellipsis"
+          style={{
+            fontFamily: font.loaded ? font.name : "system-ui",
+          }}
+        >
+          {font.name}
+        </h1>
+
+        <Button
+          variant="secondary"
+          size="sm"
+          className="gap-2"
+          onClick={() => openFontPreview(font)}
+        >
+          <ExternalLink className="h-4 w-4" />
+          Preview
+        </Button>
+        <div className="text-sm text-muted-foreground text-center mb-2">
+          Total: {font.upvotes - font.downvotes}
+        </div>
+      </CardContent>
+      <CardFooter className="flex justify-between">
+        {userVotes[font.id] ? (
+          <div className="w-full flex items-center justify-center gap-2">
+            <div className="flex items-center text-sm text-muted-foreground">
+              <Check className="h-4 w-4 mr-2" />
+              You voted
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => undoVote(font.id)}
+              className="text-sm"
+            >
+              Undo vote
+            </Button>
+          </div>
+        ) : (
+          <Button
+            variant="outline"
+            size="sm"
+            className="w-full mr-2"
+            onClick={() => voteFont(font.id, "up")}
+            disabled={remainingVotes <= 0 && !userVotes[font.id]}
+          >
+            <ThumbsUp className="h-4 w-4 mr-2" />
+            Vote for this font
+          </Button>
+        )}
+      </CardFooter>
+    </Card>
+  );
+
   return (
     <ToastProvider>
       <div className="container mx-auto py-8 px-4">
-        <div className="max-w-3xl mx-auto mb-8 text-center bg-secondary p-6 rounded-lg shadow-sm">
-          <h2 className="text-xl font-semibold mb-2">
+        <div className="max-w-3xl mx-auto mb-8 text-center bg-secondary p-6 rounded-lg shadow-sm gap-4 flex flex-col items-center">
+          <h2 className="text-xl font-semibold">
             Help us choose our fonts for the Create Event page!
           </h2>
-          <p className="mb-4">
+          <p className="mb-2">
             We're selecting fonts for our new Create Event page and need your
-            input. Vote on your favorite fonts below, and the top 8 will be
-            featured in our upcoming Create Event page.
+            input. Vote on your favorite fonts below. You can upvote up to
+            {MAX_VOTES} fonts. The top {MAX_VOTES} fonts will be used in our
+            Create Event page.
           </p>
           <div className="flex flex-wrap justify-center gap-4 text-sm">
             <div className="flex items-center">
@@ -291,6 +372,9 @@ export default function FontVotingPage() {
               <ExternalLink className="h-4 w-4 mr-1 text-blue-600" />
               <span>Click to preview it in action</span>
             </div>
+          </div>
+          <div className="border-dashed border-2 border-primary p-2 rounded-md w-fit mx-auto">
+            {remainingVotes} of {MAX_VOTES} votes remaining
           </div>
         </div>
         {!VOTING_ENABLED && (
@@ -316,76 +400,29 @@ export default function FontVotingPage() {
             <p className="mt-4 text-muted-foreground">Loading fonts...</p>
           </div>
         ) : (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {sortedFonts.map((font) => (
-              <Card key={font.id} className="overflow-hidden">
-                <CardContent className="pt-6 flex flex-col items-center gap-2">
-                  <h1
-                    className="text-4xl text-center mb-2 overflow-hidden text-ellipsis"
-                    style={{
-                      fontFamily: font.loaded ? font.name : "system-ui",
-                    }}
-                  >
-                    {font.name}
-                  </h1>
+          <>
+            {/* Top Fonts Section */}
+            <div className="mb-8">
+              <h2 className="text-xl font-semibold mb-4 underline">
+                Top {MAX_VOTES} Fonts
+              </h2>
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+                {topFonts.map(renderFontCard)}
+              </div>
+            </div>
 
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    className="gap-2"
-                    onClick={() => openFontPreview(font)}
-                  >
-                    <ExternalLink className="h-4 w-4" />
-                    Preview
-                  </Button>
-                  <div className="text-sm text-muted-foreground text-center mb-2">
-                    Net votes: {font.upvotes - font.downvotes}
-                  </div>
-                </CardContent>
-                <CardFooter className="flex justify-between">
-                  {userVotes[font.id] ? (
-                    <div className="w-full flex items-center justify-center gap-2">
-                      <div className="flex items-center text-sm text-muted-foreground">
-                        <Check className="h-4 w-4 mr-2" />
-                        You voted {userVotes[font.id]}
-                      </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => undoVote(font.id)}
-                        className="text-sm"
-                      >
-                        Undo vote
-                      </Button>
-                    </div>
-                  ) : (
-                    <>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="w-1/2 mr-2"
-                        onClick={() => voteFont(font.id, "up")}
-                        disabled={!VOTING_ENABLED}
-                      >
-                        <ThumbsUp className="h-4 w-4 mr-2 text-green-600/50" />
-                        {font.upvotes}
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="w-1/2"
-                        onClick={() => voteFont(font.id, "down")}
-                        disabled={!VOTING_ENABLED}
-                      >
-                        <ThumbsDown className="h-4 w-4 mr-2 text-red-600/50" />
-                        {font.downvotes}
-                      </Button>
-                    </>
-                  )}
-                </CardFooter>
-              </Card>
-            ))}
-          </div>
+            {/* Remaining Fonts Section */}
+            {remainingFonts.length > 0 && (
+              <div>
+                <h2 className="text-xl font-semibold mb-4 underline">
+                  Other Fonts
+                </h2>
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+                  {remainingFonts.map(renderFontCard)}
+                </div>
+              </div>
+            )}
+          </>
         )}
 
         <FontPreviewDialog

@@ -1,5 +1,6 @@
 "use client";
 
+import { Font } from "@/app/page";
 import {
   Dialog,
   DialogContent,
@@ -7,15 +8,12 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Badge } from "@/components/ui/badge";
 
 interface FontPreviewDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  font: {
-    id: number;
-    name: string;
-    url: string;
-  } | null;
+  font: Font | null;
 }
 
 export function FontPreviewDialog({
@@ -106,6 +104,17 @@ export function FontPreviewDialog({
                   June 15-18, 2023 • Design Center, San Francisco
                 </div>
               </div>
+
+              {/* Display tags if available */}
+              {font.tags && font.tags.length > 0 && (
+                <div className="flex flex-wrap gap-1 mb-4">
+                  {font.tags.map((tag, index) => (
+                    <Badge key={index} variant="secondary">
+                      {tag}
+                    </Badge>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </ScrollArea>

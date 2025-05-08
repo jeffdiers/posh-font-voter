@@ -16,15 +16,17 @@ import { v4 as uuidv4 } from "uuid";
 import { supabase } from "@/lib/supabase";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { FontPreviewDialog } from "@/components/font-preview-dialog";
+import { Badge } from "@/components/ui/badge";
 
 // Font interface to track each font
-interface Font {
+export interface Font {
   id: number;
   url: string;
   name: string;
   upvotes: number;
   downvotes: number;
   loaded: boolean;
+  tags?: string[];
 }
 
 // Interface to track user votes
@@ -86,13 +88,19 @@ export default function FontVotingPage() {
 
       if (votesError) throw votesError;
 
+      // Fetch font tags
+      const { data: fontTagsData, error: fontTagsError } = await supabase
+        .from("font_tags")
+        .select("font_id, tags(id, name)");
+
+      if (fontTagsError) throw fontTagsError;
+
       // Process fonts data
       const processedFonts = fontsData.map((font) => ({
         ...font,
         loaded: false,
+        tags: [],
       }));
-
-      setFonts(processedFonts);
 
       // Process user votes
       const userVotesMap: Record<number, "up" | "down"> = {};
@@ -100,6 +108,23 @@ export default function FontVotingPage() {
         userVotesMap[vote.font_id] = vote.vote_type as "up" | "down";
       });
 
+      // Process font tags
+      fontTagsData.forEach((fontTag: any) => {
+        const fontId = fontTag.font_id;
+        const tag = fontTag.tags;
+
+        if (tag && fontId) {
+          const fontIndex = processedFonts.findIndex((f) => f.id === fontId);
+          if (fontIndex !== -1) {
+            if (!processedFonts[fontIndex].tags) {
+              processedFonts[fontIndex].tags = [];
+            }
+            processedFonts[fontIndex].tags!.push(tag.name);
+          }
+        }
+      });
+
+      setFonts(processedFonts);
       setUserVotes(userVotesMap);
 
       // Load fonts
@@ -313,6 +338,17 @@ export default function FontVotingPage() {
         <div className="text-sm text-muted-foreground text-center mb-2">
           Total: {font.upvotes - font.downvotes}
         </div>
+
+        {/* Display tags */}
+        {font.tags && font.tags.length > 0 && (
+          <div className="flex flex-wrap gap-1 justify-center mt-2 mb-1">
+            {font.tags.map((tag, index) => (
+              <Badge key={index} variant="secondary" className="text-xs">
+                {tag}
+              </Badge>
+            ))}
+          </div>
+        )}
       </CardContent>
       <CardFooter className="flex justify-between">
         {userVotes[font.id] ? (

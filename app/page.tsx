@@ -11,14 +11,16 @@ import {
   ExternalLink,
   X,
 } from "lucide-react";
-import { toast } from "@/components/ui/use-toast";
-import { ToastProvider } from "@/components/ui/toast";
+import { toast } from "sonner";
+import { Toaster } from "@/components/ui/sonner";
 import { v4 as uuidv4 } from "uuid";
 import { supabase } from "@/lib/supabase";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { FontPreviewDialog } from "@/components/font-preview-dialog";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { ModeToggle } from "@/components/mode-toggle";
+import { PoshLogo } from "@/components/icons/posh-logo";
 
 // Font interface to track each font
 export interface Font {
@@ -90,11 +92,7 @@ export default function FontVotingPage() {
       setAllTags(data || []);
     } catch (error) {
       console.error("Error fetching tags:", error);
-      toast({
-        title: "Error",
-        description: "Failed to load tags. Please refresh the page.",
-        variant: "destructive",
-      });
+      toast.error("Failed to load tags. Please refresh the page.");
     }
   };
 
@@ -174,11 +172,7 @@ export default function FontVotingPage() {
       });
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast({
-        title: "Error",
-        description: "Failed to load fonts. Please refresh the page.",
-        variant: "destructive",
-      });
+      toast.error("Failed to load fonts. Please refresh the page.");
     } finally {
       setLoading(false);
     }
@@ -206,23 +200,17 @@ export default function FontVotingPage() {
 
     // Check if user has already voted for this font
     if (userVotes[fontId]) {
-      toast({
-        title: "Already voted",
-        description: `You've already voted for ${
-          fonts.find((f) => f.id === fontId)?.name
-        }`,
-        duration: 3000,
-      });
+      toast.error(
+        `You've already voted for ${fonts.find((f) => f.id === fontId)?.name}`
+      );
       return;
     }
 
     // Check if user has reached the maximum number of votes
     if (usedVotes >= MAX_VOTES && voteType === "up") {
-      toast({
-        title: "Vote limit reached",
-        description: `You can only upvote ${MAX_VOTES} fonts. Please remove a vote to continue.`,
-        duration: 3000,
-      });
+      toast.error(
+        `You can only upvote ${MAX_VOTES} fonts. Please remove a vote to continue.`
+      );
       return;
     }
 
@@ -258,20 +246,12 @@ export default function FontVotingPage() {
       }));
 
       // Show toast notification
-      toast({
-        title: "Vote recorded",
-        description: `You voted ${voteType} for ${
-          fonts.find((f) => f.id === fontId)?.name
-        }`,
-        duration: 3000,
-      });
+      toast.success(
+        `You voted ${voteType} for ${fonts.find((f) => f.id === fontId)?.name}`
+      );
     } catch (error) {
       console.error("Error voting:", error);
-      toast({
-        title: "Error",
-        description: "Failed to record your vote. Please try again.",
-        variant: "destructive",
-      });
+      toast.error("Failed to record your vote. Please try again.");
     }
   };
 
@@ -321,20 +301,14 @@ export default function FontVotingPage() {
       });
 
       // Show toast notification
-      toast({
-        title: "Vote removed",
-        description: `Your vote for ${
+      toast.success(
+        `Your vote for ${
           fonts.find((f) => f.id === fontId)?.name
-        } has been removed`,
-        duration: 3000,
-      });
+        } has been removed`
+      );
     } catch (error) {
       console.error("Error removing vote:", error);
-      toast({
-        title: "Error",
-        description: "Failed to remove your vote. Please try again.",
-        variant: "destructive",
-      });
+      toast.error("Failed to remove your vote. Please try again.");
     }
   };
 
@@ -438,7 +412,7 @@ export default function FontVotingPage() {
             }
           >
             <ThumbsUp className="h-4 w-4 mr-2" />
-            Vote for this font
+            {remainingVotes > 0 ? "Vote for this font" : "Vote limit reached"}
           </Button>
         )}
       </CardFooter>
@@ -446,8 +420,19 @@ export default function FontVotingPage() {
   );
 
   return (
-    <ToastProvider>
-      <div className="container mx-auto py-8 px-4">
+    <div>
+      <header className="sticky inset-x-0 top-0 z-50 w-full bg-transparent px-4 py-2 backdrop-blur 2xl:bg-transparent 2xl:backdrop-blur-none border-b border-border">
+        <div className="flex justify-between items-center">
+          <PoshLogo className="pl-2 size-8" />
+          <div className="flex items-center gap-2">
+            <div className="  w-fit mx-auto rounded-md border border-border bg-primary text-primary-foreground px-2 py-1">
+              {remainingVotes} of {MAX_VOTES} votes remaining
+            </div>
+            <ModeToggle />
+          </div>
+        </div>
+      </header>
+      <div className="container mx-auto py-8 px-1">
         <div className="max-w-3xl mx-auto mb-8 text-center bg-secondary p-6 rounded-lg shadow-sm gap-4 flex flex-col items-center">
           <h2 className="text-xl font-semibold">
             Help us choose our fonts for the Create Event page!
@@ -471,9 +456,6 @@ export default function FontVotingPage() {
               <ExternalLink className="h-4 w-4 mr-1 text-blue-600" />
               <span>Click to preview it in action</span>
             </div>
-          </div>
-          <div className="border-dashed border-2 border-primary p-2 rounded-md w-fit mx-auto">
-            {remainingVotes} of {MAX_VOTES} votes remaining
           </div>
         </div>
 
@@ -505,7 +487,7 @@ export default function FontVotingPage() {
               Clear filters
             </Button>
           </div>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 justify-center">
             {allTags.map((tag) => (
               <Badge
                 key={tag.id}
@@ -543,7 +525,7 @@ export default function FontVotingPage() {
               <h2 className="text-xl font-semibold mb-4 underline">
                 Top {MAX_VOTES} Fonts
               </h2>
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                 {topFonts.map(renderFontCard)}
               </div>
             </div>
@@ -554,7 +536,7 @@ export default function FontVotingPage() {
                 <h2 className="text-xl font-semibold mb-4 underline">
                   Other Fonts
                 </h2>
-                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                   {remainingFonts.map(renderFontCard)}
                 </div>
               </div>
@@ -567,7 +549,9 @@ export default function FontVotingPage() {
           onClose={closeFontPreview}
           font={selectedFont}
         />
+
+        <Toaster richColors />
       </div>
-    </ToastProvider>
+    </div>
   );
 }

@@ -9,6 +9,7 @@ import {
   Check,
   AlertCircle,
   ExternalLink,
+  X,
 } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 import { ToastProvider } from "@/components/ui/toast";
@@ -17,6 +18,7 @@ import { supabase } from "@/lib/supabase";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { FontPreviewDialog } from "@/components/font-preview-dialog";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 // Font interface to track each font
 export interface Font {
@@ -35,11 +37,19 @@ interface UserVote {
   vote_type: "up" | "down";
 }
 
+// Tag interface
+interface Tag {
+  id: number;
+  name: string;
+}
+
 const VOTING_ENABLED = false;
 const MAX_VOTES = 8;
 
 export default function FontVotingPage() {
   const [fonts, setFonts] = useState<Font[]>([]);
+  const [allTags, setAllTags] = useState<Tag[]>([]);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [userVotes, setUserVotes] = useState<Record<number, "up" | "down">>({});
   const [userId, setUserId] = useState<string>("");
   const [loading, setLoading] = useState(true);
@@ -63,10 +73,30 @@ export default function FontVotingPage() {
 
       // Fetch fonts and user votes
       await fetchFontsAndVotes(id);
+      await fetchAllTags();
     };
 
     initializeApp();
   }, []);
+
+  // Fetch all available tags
+  const fetchAllTags = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("tags")
+        .select("*")
+        .order("name");
+      if (error) throw error;
+      setAllTags(data || []);
+    } catch (error) {
+      console.error("Error fetching tags:", error);
+      toast({
+        title: "Error",
+        description: "Failed to load tags. Please refresh the page.",
+        variant: "destructive",
+      });
+    }
+  };
 
   // Fetch fonts and user votes from Supabase
   const fetchFontsAndVotes = async (uid: string) => {
@@ -152,6 +182,22 @@ export default function FontVotingPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Toggle tag selection for filtering
+  const toggleTag = (tagName: string) => {
+    setSelectedTags((prev) => {
+      if (prev.includes(tagName)) {
+        return prev.filter((t) => t !== tagName);
+      } else {
+        return [...prev, tagName];
+      }
+    });
+  };
+
+  // Clear all selected tags
+  const clearTagFilters = () => {
+    setSelectedTags([]);
   };
 
   // Vote for a font (up or down)
@@ -301,14 +347,27 @@ export default function FontVotingPage() {
     setIsDialogOpen(false);
   };
 
+  // Filter fonts based on selected tags
+  const filterFontsByTags = (fonts: Font[]) => {
+    if (selectedTags.length === 0) return fonts;
+
+    return fonts.filter((font) => {
+      if (!font.tags || font.tags.length === 0) return false;
+      return selectedTags.every((tag) => font.tags!.includes(tag));
+    });
+  };
+
   // Sort fonts by net votes (upvotes - downvotes)
   const sortedFonts = [...fonts].sort(
     (a, b) => b.upvotes - b.downvotes - (a.upvotes - a.downvotes)
   );
 
-  // Get top fonts and remaining fonts
-  const topFonts = sortedFonts.slice(0, MAX_VOTES);
-  const remainingFonts = sortedFonts.slice(MAX_VOTES);
+  // Filter fonts by selected tags
+  const filteredFonts = filterFontsByTags(sortedFonts);
+
+  // Get top fonts and remaining fonts from filtered list
+  const topFonts = filteredFonts.slice(0, MAX_VOTES);
+  const remainingFonts = filteredFonts.slice(MAX_VOTES);
 
   // Render a font card
   const renderFontCard = (font: Font) => (
@@ -417,6 +476,7 @@ export default function FontVotingPage() {
             {remainingVotes} of {MAX_VOTES} votes remaining
           </div>
         </div>
+
         {!VOTING_ENABLED && (
           <div className="container mx-auto p-4 flex flex-col gap-4">
             <Alert variant="destructive">
@@ -427,6 +487,43 @@ export default function FontVotingPage() {
             </Alert>
           </div>
         )}
+
+        {/* Tag filtering section */}
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="text-lg font-medium">Filter by Tags</h2>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={clearTagFilters}
+              className={cn(
+                "h-8 px-2 text-xs",
+                selectedTags.length === 0 && "hidden"
+              )}
+            >
+              <X className="h-3 w-3 mr-1" />
+              Clear filters
+            </Button>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {allTags.map((tag) => (
+              <Badge
+                key={tag.id}
+                variant={
+                  selectedTags.includes(tag.name) ? "default" : "outline"
+                }
+                className="cursor-pointer hover:opacity-80 transition-opacity"
+                onClick={() => toggleTag(tag.name)}
+              >
+                {tag.name}
+                {selectedTags.includes(tag.name) && (
+                  <X className="h-3 w-3 ml-1" />
+                )}
+              </Badge>
+            ))}
+          </div>
+        </div>
+
         {loading ? (
           <div className="text-center py-12">
             <div

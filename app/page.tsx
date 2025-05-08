@@ -314,17 +314,19 @@ export default function FontVotingPage() {
   const renderFontCard = (font: Font) => (
     <Card
       key={font.id}
-      className="overflow-hidden hover:shadow-md transition-shadow duration-200"
+      className="overflow-hidden hover:shadow-md transition-shadow duration-200 flex flex-col justify-between w-full"
     >
       <CardContent className="pt-6 flex flex-col items-center gap-2">
-        <h1
-          className="text-4xl text-center mb-2 overflow-hidden text-ellipsis"
-          style={{
-            fontFamily: font.loaded ? font.name : "system-ui",
-          }}
-        >
-          {font.name}
-        </h1>
+        <div className="min-h-[160px] m-auto">
+          <h1
+            className="text-4xl text-center p-2 overflow-hidden text-ellipsis"
+            style={{
+              fontFamily: font.loaded ? font.name : "system-ui",
+            }}
+          >
+            {font.name}
+          </h1>
+        </div>
 
         <Button
           variant="secondary"
@@ -350,7 +352,7 @@ export default function FontVotingPage() {
           </div>
         )}
       </CardContent>
-      <CardFooter className="flex justify-between">
+      <CardFooter className="flex justify-between flex-end">
         {userVotes[font.id] ? (
           <div className="w-full flex items-center justify-center gap-2">
             <div className="flex items-center text-sm text-muted-foreground">

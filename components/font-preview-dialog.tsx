@@ -87,32 +87,19 @@ export function FontPreviewDialog({
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <h3 className="text-sm font-medium text-muted-foreground">
-                  Call to Action
-                </h3>
-                <div className="text-lg font-medium">
-                  Register Now & Save 20%
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <h3 className="text-sm font-medium text-muted-foreground">
-                  Date & Location
-                </h3>
-                <div className="text-base">
-                  June 15-18, 2023 • Design Center, San Francisco
-                </div>
-              </div>
-
               {/* Display tags if available */}
               {font.tags && font.tags.length > 0 && (
-                <div className="flex flex-wrap gap-1 mb-4">
-                  {font.tags.map((tag, index) => (
-                    <Badge key={index} variant="secondary">
-                      {tag}
-                    </Badge>
-                  ))}
+                <div className="space-x-2">
+                  <h3 className="text-sm font-medium text-muted-foreground mb-2">
+                    Tags
+                  </h3>
+                  <div className="flex flex-wrap gap-1 mb-4">
+                    {font.tags.map((tag, index) => (
+                      <Badge key={index} variant="secondary">
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>

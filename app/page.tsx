@@ -45,7 +45,7 @@ interface Tag {
   name: string;
 }
 
-const VOTING_ENABLED = false;
+const VOTING_ENABLED = true;
 const MAX_VOTES = 8;
 
 export default function FontVotingPage() {

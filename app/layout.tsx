@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
-import { ModeToggle } from "@/components/mode-toggle";
-import { PoshLogo } from "@/components/icons/posh-logo";
 
 export const metadata: Metadata = {
   title: "Posh Fonts",

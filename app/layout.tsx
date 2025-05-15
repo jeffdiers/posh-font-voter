@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Header } from "@/components/header";
 
 export const metadata: Metadata = {
   title: "Posh Fonts",
@@ -16,6 +17,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <Header />
           {children}
         </ThemeProvider>
       </body>

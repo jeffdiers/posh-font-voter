@@ -19,8 +19,6 @@ import { Alert, AlertTitle } from "@/components/ui/alert";
 import { FontPreviewDialog } from "@/components/font-preview-dialog";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { ModeToggle } from "@/components/mode-toggle";
-import { PoshLogo } from "@/components/icons/posh-logo";
 
 // Font interface to track each font
 export interface Font {
@@ -421,18 +419,7 @@ export default function FontVotingPage() {
 
   return (
     <div>
-      <header className="sticky inset-x-0 top-0 z-50 w-full bg-transparent px-4 py-2 backdrop-blur 2xl:bg-transparent 2xl:backdrop-blur-none border-b border-border">
-        <div className="flex justify-between items-center">
-          <PoshLogo className="pl-2 size-8" />
-          <div className="flex items-center gap-2">
-            <div className="  w-fit mx-auto rounded-md border border-border bg-primary text-primary-foreground px-2 py-1">
-              {remainingVotes} of {MAX_VOTES} votes remaining
-            </div>
-            <ModeToggle />
-          </div>
-        </div>
-      </header>
-      <div className="container mx-auto py-8 px-1">
+      <div className="container mx-auto py-8 px-1 pt-16">
         <div className="max-w-3xl mx-auto mb-8 text-center bg-secondary p-6 rounded-lg shadow-sm gap-4 flex flex-col items-center">
           <h2 className="text-xl font-semibold">
             Help us choose our fonts for the Create Event page!
@@ -455,6 +442,9 @@ export default function FontVotingPage() {
             <div className="flex items-center">
               <ExternalLink className="h-4 w-4 mr-1 text-blue-600" />
               <span>Click to preview it in action</span>
+            </div>
+            <div className="  w-fit mx-auto rounded-md border border-border bg-primary text-primary-foreground px-2 py-1">
+              {remainingVotes} of {MAX_VOTES} votes remaining
             </div>
           </div>
         </div>

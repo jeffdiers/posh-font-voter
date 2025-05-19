@@ -1,0 +1,43 @@
+@keyframes pulse {
+  0% {
+    opacity: 0.02;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.15;
+    transform: scale(1.4);
+  }
+  100% {
+    opacity: 0.02;
+    transform: scale(1);
+  }
+}
+
+.pixels {
+  .overlay {
+    position: absolute;
+    inset: 0;
+    background: url("https://dice-media.imgix.net/attachments/2025-04-02/fc9245af-663c-4b76-bc72-4fcf898629c8.jpg?rect=0%2C0%2C816%2C816&auto=format%2Ccompress&q=40&w=328&h=328&fit=crop&crop=faces%2Ccenter&dpr=2")
+      no-repeat center center / cover;
+    filter: blur(30px);
+    z-index: 1;
+  }
+
+  .pixel-grid {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 40px);
+    grid-template-rows: repeat(auto-fill, 40px);
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  .pixel {
+    opacity: 0.04;
+    animation: pulse 2s infinite ease-in-out;
+    transform: scale(1);
+    width: 100%;
+    height: 100%;
+  }
+}

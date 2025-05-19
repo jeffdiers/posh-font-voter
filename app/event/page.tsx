@@ -27,7 +27,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import { PoshLogo } from "@/components/icons/posh-logo";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
-import { OverlayParticle } from "@/components/overlay-particle";
+import { OverlayParticle } from "@/components/overlays/particle";
+import { OverlayGlass } from "@/components/overlays/glass";
+import { PixelGridOverlay } from "@/components/overlays/pixels";
 
 interface Font {
   id: number;
@@ -69,6 +71,16 @@ const gradientOptions: GradientOption[] = [
     id: "particle",
     name: "Particle",
     value: "overlay-particle",
+  },
+  {
+    id: "glass",
+    name: "Glass",
+    value: "overlay-glass",
+  },
+  {
+    id: "pixels",
+    name: "Pixels",
+    value: "overlay-pixels",
   },
 ];
 
@@ -130,6 +142,8 @@ export default function EventPage() {
       className={`${selectedGradient} min-h-screen w-screen bg-cover bg-center grid`}
     >
       {selectedGradient === "overlay-particle" && <OverlayParticle />}
+      {selectedGradient === "overlay-glass" && <OverlayGlass />}
+      {selectedGradient === "overlay-pixels" && <PixelGridOverlay />}
 
       <div className="z-10">
         <div className="container mx-auto py-8 px-4 sm:px-36 pt-12 sm:pt-24 w-full">

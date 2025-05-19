@@ -1,0 +1,85 @@
+@keyframes ap1 {
+  from {
+    left: -20%;
+    top: 20%;
+  }
+  to {
+    left: 40%;
+    top: 25%;
+  }
+}
+
+@keyframes ap2 {
+  from {
+    left: 10%;
+    top: -10%;
+  }
+  to {
+    left: 60%;
+    top: 60%;
+  }
+}
+
+@keyframes ap3 {
+  from {
+    left: 70%;
+    top: -20%;
+  }
+  to {
+    left: -10%;
+    top: 80%;
+  }
+}
+
+@keyframes bgMove {
+  from {
+    background-position: 50% 0%;
+    background-size: 120%;
+  }
+  to {
+    background-position: 50% 100%;
+    background-size: 150%;
+  }
+}
+
+.glass {
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  background: url("https://dice-media.imgix.net/attachments/2025-04-02/fc9245af-663c-4b76-bc72-4fcf898629c8.jpg?rect=0%2C0%2C816%2C816&auto=format%2Ccompress&q=40&w=328&h=328&fit=crop&crop=faces%2Ccenter&dpr=2")
+    no-repeat center center / cover;
+  overflow: hidden;
+  animation: bgMove 10s alternate infinite both;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  filter: blur(50px);
+  position: absolute;
+  inset: 0;
+
+  .overlay {
+    height: 50rem;
+    width: 50rem;
+    border-radius: 50%;
+    position: absolute;
+    opacity: 0.5;
+  }
+
+  ._1 {
+    background: radial-gradient(#5289ca, #632c65);
+    animation: ap1 7s alternate infinite cubic-bezier(1, 0.1, 0.58, 1);
+    z-index: 1;
+  }
+
+  ._2 {
+    background: radial-gradient(#e2a9e5, #632c65);
+    animation: ap2 4s alternate infinite cubic-bezier(1, 0.8, -0.1, 1);
+    z-index: 2;
+  }
+
+  ._3 {
+    background: radial-gradient(#e2a9e5, #4b384c);
+    animation: ap3 6s alternate infinite ease-in-out;
+    z-index: 3;
+  }
+}

@@ -145,11 +145,14 @@
   --radius-xl: calc(var(--radius) + 4px);
 
   /* Animations */
+  --size: 20px;
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
   --animate-slide-up: slide-up 0.7s ease-out;
   --animate-slide-down: slide-down 0.7s ease-out;
   --animate-pulse: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1);
+  --animate-scroll-lines: scrollLines 10s linear infinite;
+  --animate-flicker: flicker 1s linear infinite;
 
   @keyframes accordion-down {
     from {
@@ -170,9 +173,29 @@
   }
 
   @keyframes pulse {
+    0% {
+      opacity: 0.05;
+    }
     50% {
-      opacity: 0.5;
-      transform: scale(1.05);
+      opacity: 0.15;
+    }
+    100% {
+      opacity: 0.05;
+    }
+  }
+
+  @keyframes scrollLines {
+    from {
+      background-position-y: 0;
+    }
+    to {
+      background-position-y: 100%;
+    }
+  }
+
+  @keyframes flicker {
+    to {
+      mask-position: 50% 50%, 0 50%;
     }
   }
 }

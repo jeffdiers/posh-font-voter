@@ -1,0 +1,77 @@
+.flyer-hero {
+  position: absolute;
+  height: 100vh;
+  width: 100vw;
+  background: url("https://dice-media.imgix.net/attachments/2025-04-02/fc9245af-663c-4b76-bc72-4fcf898629c8.jpg?rect=0%2C0%2C816%2C816&auto=format%2Ccompress&q=40&w=328&h=328&fit=crop&crop=faces%2Ccenter&dpr=2")
+    center/cover no-repeat;
+  overflow: hidden;
+}
+
+.flyer-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  backdrop-filter: blur(26px);
+  z-index: 1;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.gradient {
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 255, 255, 0.05) 0%,
+    transparent 80%
+  );
+  animation: pulse 6s ease-in-out infinite;
+  mix-blend-mode: overlay;
+}
+
+.noise {
+  background-image: url("https://grainy-gradients.vercel.app/noise.svg");
+  opacity: 0.08;
+  mix-blend-mode: soft-light;
+}
+
+.scanlines::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.05) 0px,
+    rgba(0, 0, 0, 0.05) 2px,
+    transparent 2px,
+    transparent 8px
+  );
+  animation: scrollLines 10s linear infinite;
+}
+
+.el {
+  background: conic-gradient(
+    from 180deg at 50% 70%,
+    white 0deg,
+    white 72deg,
+    white 144deg,
+    white 216deg,
+    white 288deg,
+    white 360deg
+  );
+  width: 100%;
+  height: 100%;
+  mask: radial-gradient(circle at 50% 50%, white 2px, transparent 2.5px) 50% 50% /
+      var(--size) var(--size),
+    url("https://assets.codepen.io/605876/noise-mask.png") 256px 50% / 256px
+      256px;
+  mask-composite: intersect;
+  animation: flicker 20s infinite linear;
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}

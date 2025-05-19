@@ -139,7 +139,7 @@ export default function EventPage() {
 
   return (
     <div
-      className={`${selectedGradient} min-h-screen w-screen bg-cover bg-center grid`}
+      className={`${selectedGradient} min-h-screen w-screen bg-cover bg-center flex`}
     >
       {selectedGradient === "overlay-particle" && <OverlayParticle />}
       {selectedGradient === "overlay-glass" && <OverlayGlass />}

@@ -86,7 +86,7 @@
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.552 0.016 285.938);
 
-  --accent-event: #436dac;
+  --accent-event: oklch(0.534 0.1102 258.29);
   --event-theme-gradient-from: color-mix(
     in srgb,
     var(--accent-event) 80%,
@@ -97,7 +97,7 @@
     var(--accent-event) 40%,
     black
   );
-  --event-theme-gradient-to: color-mix(in srgb, #436dac 10%, black);
+  --event-theme-gradient-to: color-mix(in srgb, var(--accent-event) 10%, black);
 }
 
 @theme inline {
@@ -181,7 +181,7 @@
     @apply scroll-smooth;
   }
   body {
-    @apply overscroll-none font-sans bg-background text-foreground starting:opacity-0 ease-in-out duration-500;
+    @apply overscroll-none bg-background font-sans text-foreground duration-500 ease-in-out starting:opacity-0;
   }
   h1,
   h2,

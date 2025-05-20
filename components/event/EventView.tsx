@@ -19,10 +19,11 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { cn } from "@/lib/utils";
 
-import { NeonIsometricMaze } from "@/components/neon-isometric-maze";
 import { OverlayGlass } from "@/components/overlays/glass";
+import { NeonIsometricMaze } from "@/components/overlays/neon-isometric-maze";
 import { OverlayParticle } from "@/components/overlays/particle";
 import { PixelGridOverlay } from "@/components/overlays/pixels";
+import { WavesOverlay } from "@/components/overlays/waves";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -110,6 +111,12 @@ const gradientOptions: Record<string, GradientOption> = {
     name: "Neon Isometric Maze",
     type: "dynamic",
     component: <NeonIsometricMaze />,
+  },
+  waves: {
+    id: "waves",
+    name: "Waves",
+    type: "dynamic",
+    component: <WavesOverlay />,
   },
 };
 

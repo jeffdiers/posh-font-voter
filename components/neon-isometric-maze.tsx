@@ -91,7 +91,7 @@ export const NeonIsometricMaze: React.FC = () => {
 
   return (
     <div className="absolute h-screen w-screen transition-all duration-2000 starting:opacity-0">
-      <canvas ref={canvasRef} className="block blur-md" />
+      <canvas ref={canvasRef} className="block blur-lg" />
     </div>
   );
 };

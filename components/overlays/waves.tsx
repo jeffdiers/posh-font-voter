@@ -1,78 +1,43 @@
-"use client";
-
-import { useEffect, useRef } from "react";
+import "@/styles/waves.css";
 
 export function WavesOverlay() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    let animationFrameId: number;
-    let time = 0;
-
-    const resizeCanvas = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    };
-
-    const drawHalftoneWave = () => {
-      const gridSize = 20;
-      const rows = Math.ceil(canvas.height / gridSize);
-      const cols = Math.ceil(canvas.width / gridSize);
-
-      for (let y = 0; y < rows; y++) {
-        for (let x = 0; x < cols; x++) {
-          const centerX = x * gridSize;
-          const centerY = y * gridSize;
-          const distanceFromCenter = Math.sqrt(
-            Math.pow(centerX - canvas.width / 2, 2) +
-              Math.pow(centerY - canvas.height / 2, 2),
-          );
-          const maxDistance = Math.sqrt(
-            Math.pow(canvas.width / 2, 2) + Math.pow(canvas.height / 2, 2),
-          );
-          const normalizedDistance = distanceFromCenter / maxDistance;
-
-          const waveOffset =
-            Math.sin(normalizedDistance * 10 - time) * 0.5 + 0.5;
-          const size = gridSize * waveOffset * 0.8;
-
-          ctx.beginPath();
-          ctx.arc(centerX, centerY, size / 2, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(24, 24, 24, ${waveOffset * 0.5})`;
-          ctx.fill();
-        }
-      }
-    };
-
-    const animate = () => {
-      ctx.fillStyle = "rgba(67, 109, 172, 0.1)";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      drawHalftoneWave();
-
-      time += 0.05;
-      animationFrameId = requestAnimationFrame(animate);
-    };
-
-    resizeCanvas();
-    window.addEventListener("resize", resizeCanvas);
-
-    animate();
-
-    return () => {
-      cancelAnimationFrame(animationFrameId);
-      window.removeEventListener("resize", resizeCanvas);
-    };
-  }, []);
-
   return (
-    <div className="absolute h-screen w-screen transition-all duration-2000 starting:opacity-0">
-      <canvas ref={canvasRef} className="block bg-accent-event blur-lg" />
+    <div className="waves_container">
+      <div className="waves_bg"></div>
+      <div className="waves_glitch-layer red"></div>
+      <div className="waves_glitch-layer blue"></div>
+
+      <svg className="waves_svg">
+        <filter id="fractalDistortion">
+          <feTurbulence
+            type="fractalNoise"
+            baseFrequency="0.008"
+            numOctaves="2"
+            result="turb"
+          >
+            <animate
+              attributeName="baseFrequency"
+              values="0.008;0.015;0.012;0.01;0.008"
+              dur="12s"
+              repeatCount="indefinite"
+            />
+          </feTurbulence>
+          <feDisplacementMap
+            in="SourceGraphic"
+            in2="turb"
+            scale="30"
+            xChannelSelector="R"
+            yChannelSelector="G"
+          >
+            <animate
+              attributeName="scale"
+              values="30;50;40;35;30"
+              dur="12s"
+              repeatCount="indefinite"
+            />
+          </feDisplacementMap>
+        </filter>
+      </svg>
     </div>
   );
 }

@@ -23,6 +23,7 @@ import { OverlayGlass } from "@/components/overlays/glass";
 import { NeonIsometricMaze } from "@/components/overlays/neon-isometric-maze";
 import { OverlayParticle } from "@/components/overlays/particle";
 import { PixelGridOverlay } from "@/components/overlays/pixels";
+import { RippleOverlay } from "@/components/overlays/ripple";
 import { WavesOverlay } from "@/components/overlays/waves";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Avatar } from "@/components/ui/avatar";
@@ -117,6 +118,12 @@ const gradientOptions: Record<string, GradientOption> = {
     name: "Waves",
     type: "dynamic",
     component: <WavesOverlay />,
+  },
+  ripple: {
+    id: "ripple",
+    name: "Ripple",
+    type: "dynamic",
+    component: <RippleOverlay />,
   },
 };
 

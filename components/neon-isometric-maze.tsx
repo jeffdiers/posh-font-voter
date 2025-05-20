@@ -26,7 +26,7 @@ export const NeonIsometricMaze: React.FC = () => {
     const d = () => {
       if (!canvas || !x) return;
       const s = Math.min(canvas.width, canvas.height) / 15;
-      const g = Math.ceil(canvas.width / s) * 2;
+      const g = Math.ceil(canvas.width / s) * 2.75;
       const h = Math.ceil(canvas.height / (s * 0.5)) * 2;
       const w = canvas.width / 2;
       const v = canvas.height / 2;
@@ -75,7 +75,7 @@ export const NeonIsometricMaze: React.FC = () => {
       x.fillStyle = "rgba(0,0,0,.1)";
       x.fillRect(0, 0, canvas.width, canvas.height);
       d();
-      t += 0.015;
+      t += 0.025;
       animationFrameId = requestAnimationFrame(a);
     };
 
@@ -90,9 +90,8 @@ export const NeonIsometricMaze: React.FC = () => {
   }, []);
 
   return (
-    <div className="absolute transition-all duration-2000 starting:opacity-0">
-      <div className="absolute inset-0 h-screen w-screen bg-background/30 backdrop-blur-xl" />
-      <canvas ref={canvasRef} className="block" />
+    <div className="absolute h-screen w-screen transition-all duration-2000 starting:opacity-0">
+      <canvas ref={canvasRef} className="block blur-md" />
     </div>
   );
 };

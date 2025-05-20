@@ -1,24 +1,27 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { toast } from "sonner";
+import { v4 as uuidv4 } from "uuid";
+
 import {
-  ThumbsUp,
-  ThumbsDown,
-  Check,
   AlertCircle,
+  Check,
   ExternalLink,
+  ThumbsDown,
+  ThumbsUp,
   X,
 } from "lucide-react";
-import { toast } from "sonner";
-import { Toaster } from "@/components/ui/sonner";
-import { v4 as uuidv4 } from "uuid";
+import { useEffect, useState } from "react";
+
 import { supabase } from "@/lib/supabase";
-import { Alert, AlertTitle } from "@/components/ui/alert";
-import { FontPreviewDialog } from "@/components/font-preview-dialog";
-import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+
+import { FontPreviewDialog } from "@/components/font-preview-dialog";
+import { Alert, AlertTitle } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Toaster } from "@/components/ui/sonner";
 
 // Font interface to track each font
 export interface Font {
@@ -135,20 +138,21 @@ export default function FontVotingPage() {
       });
 
       // Process font tags
-      fontTagsData.forEach((fontTag: any) => {
-        const fontId = fontTag.font_id;
-        const tag = fontTag.tags;
+      fontTagsData.forEach(
+        (fontTag: { font_id: number; tags: { name: string }[] }) => {
+          const fontId = fontTag.font_id;
+          const tag = fontTag.tags;
 
-        if (tag && fontId) {
-          const fontIndex = processedFonts.findIndex((f) => f.id === fontId);
-          if (fontIndex !== -1) {
-            if (!processedFonts[fontIndex].tags) {
-              processedFonts[fontIndex].tags = [];
+          if (tag && fontId) {
+            const fontIndex = processedFonts.findIndex((f) => f.id === fontId);
+            if (fontIndex !== -1) {
+              if (!processedFonts[fontIndex].tags) {
+                processedFonts[fontIndex].tags = tag.map((t) => t.name);
+              }
             }
-            processedFonts[fontIndex].tags!.push(tag.name);
           }
-        }
-      });
+        },
+      );
 
       setFonts(processedFonts);
       setUserVotes(userVotesMap);
@@ -163,8 +167,8 @@ export default function FontVotingPage() {
         link.onload = () => {
           setFonts((prevFonts) =>
             prevFonts.map((f) =>
-              f.id === font.id ? { ...f, loaded: true } : f
-            )
+              f.id === font.id ? { ...f, loaded: true } : f,
+            ),
           );
         };
       });
@@ -199,7 +203,7 @@ export default function FontVotingPage() {
     // Check if user has already voted for this font
     if (userVotes[fontId]) {
       toast.error(
-        `You've already voted for ${fonts.find((f) => f.id === fontId)?.name}`
+        `You've already voted for ${fonts.find((f) => f.id === fontId)?.name}`,
       );
       return;
     }
@@ -207,7 +211,7 @@ export default function FontVotingPage() {
     // Check if user has reached the maximum number of votes
     if (usedVotes >= MAX_VOTES && voteType === "up") {
       toast.error(
-        `You can only upvote ${MAX_VOTES} fonts. Please remove a vote to continue.`
+        `You can only upvote ${MAX_VOTES} fonts. Please remove a vote to continue.`,
       );
       return;
     }
@@ -234,7 +238,7 @@ export default function FontVotingPage() {
             };
           }
           return font;
-        })
+        }),
       );
 
       // Update user votes
@@ -245,7 +249,7 @@ export default function FontVotingPage() {
 
       // Show toast notification
       toast.success(
-        `You voted ${voteType} for ${fonts.find((f) => f.id === fontId)?.name}`
+        `You voted ${voteType} for ${fonts.find((f) => f.id === fontId)?.name}`,
       );
     } catch (error) {
       console.error("Error voting:", error);
@@ -288,7 +292,7 @@ export default function FontVotingPage() {
             };
           }
           return font;
-        })
+        }),
       );
 
       // Remove the user's vote for this font
@@ -302,7 +306,7 @@ export default function FontVotingPage() {
       toast.success(
         `Your vote for ${
           fonts.find((f) => f.id === fontId)?.name
-        } has been removed`
+        } has been removed`,
       );
     } catch (error) {
       console.error("Error removing vote:", error);
@@ -331,7 +335,7 @@ export default function FontVotingPage() {
 
   // Sort fonts by net votes (upvotes - downvotes)
   const sortedFonts = [...fonts].sort(
-    (a, b) => b.upvotes - b.downvotes - (a.upvotes - a.downvotes)
+    (a, b) => b.upvotes - b.downvotes - (a.upvotes - a.downvotes),
   );
 
   // Filter fonts by selected tags
@@ -345,12 +349,12 @@ export default function FontVotingPage() {
   const renderFontCard = (font: Font) => (
     <Card
       key={font.id}
-      className="overflow-hidden hover:shadow-md transition-shadow duration-200 flex flex-col justify-between w-full"
+      className="flex w-full flex-col justify-between overflow-hidden transition-shadow duration-200 hover:shadow-md"
     >
-      <CardContent className="pt-6 flex flex-col items-center gap-2">
-        <div className="min-h-[160px] m-auto">
+      <CardContent className="flex flex-col items-center gap-2 pt-6">
+        <div className="m-auto min-h-[160px]">
           <h1
-            className="text-4xl text-center p-2 overflow-hidden text-ellipsis"
+            className="overflow-hidden p-2 text-center text-4xl text-ellipsis"
             style={{
               fontFamily: font.loaded ? font.name : "system-ui",
             }}
@@ -368,13 +372,13 @@ export default function FontVotingPage() {
           <ExternalLink className="h-4 w-4" />
           Preview
         </Button>
-        <div className="text-sm text-muted-foreground text-center mb-2">
+        <div className="mb-2 text-center text-sm text-muted-foreground">
           Total: {font.upvotes - font.downvotes}
         </div>
 
         {/* Display tags */}
         {font.tags && font.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1 justify-center mt-2 mb-1">
+          <div className="mt-2 mb-1 flex flex-wrap justify-center gap-1">
             {font.tags.map((tag, index) => (
               <Badge key={index} variant="secondary" className="text-xs">
                 {tag}
@@ -383,11 +387,11 @@ export default function FontVotingPage() {
           </div>
         )}
       </CardContent>
-      <CardFooter className="flex justify-between flex-end">
+      <CardFooter className="flex-end flex justify-between">
         {userVotes[font.id] ? (
-          <div className="w-full flex items-center justify-center gap-2">
+          <div className="flex w-full items-center justify-center gap-2">
             <div className="flex items-center text-sm text-muted-foreground">
-              <Check className="h-4 w-4 mr-2" />
+              <Check className="mr-2 h-4 w-4" />
               You voted
             </div>
             <Button
@@ -403,13 +407,13 @@ export default function FontVotingPage() {
           <Button
             variant="outline"
             size="sm"
-            className="w-full mr-2"
+            className="mr-2 w-full"
             onClick={() => voteFont(font.id, "up")}
             disabled={
               (remainingVotes <= 0 && !userVotes[font.id]) || !VOTING_ENABLED
             }
           >
-            <ThumbsUp className="h-4 w-4 mr-2" />
+            <ThumbsUp className="mr-2 h-4 w-4" />
             {remainingVotes > 0 ? "Vote for this font" : "Vote limit reached"}
           </Button>
         )}
@@ -419,38 +423,38 @@ export default function FontVotingPage() {
 
   return (
     <div>
-      <div className="container mx-auto py-8 px-1 pt-16">
-        <div className="max-w-3xl mx-auto mb-8 text-center bg-secondary p-6 rounded-lg shadow-sm gap-4 flex flex-col items-center">
+      <div className="container mx-auto px-1 py-8 pt-16">
+        <div className="mx-auto mb-8 flex max-w-3xl flex-col items-center gap-4 rounded-lg bg-secondary p-6 text-center shadow-sm">
           <h2 className="text-xl font-semibold">
             Help us choose our fonts for the Create Event page!
           </h2>
           <p className="mb-2">
-            We're selecting fonts for our new Create Event page and need your
-            input. Vote on your favorite fonts below. You can upvote up to
+            We&apos;re selecting fonts for our new Create Event page and need
+            your input. Vote on your favorite fonts below. You can upvote up to
             {MAX_VOTES} fonts. The top {MAX_VOTES} fonts will be used in our
             Create Event page.
           </p>
           <div className="flex flex-wrap justify-center gap-4 text-sm">
             <div className="flex items-center">
-              <ThumbsUp className="h-4 w-4 mr-1 text-green-600" />
+              <ThumbsUp className="mr-1 h-4 w-4 text-green-600" />
               <span>Vote up fonts you love</span>
             </div>
             <div className="flex items-center">
-              <ThumbsDown className="h-4 w-4 mr-1 text-red-600" />
+              <ThumbsDown className="mr-1 h-4 w-4 text-red-600" />
               <span>Vote down fonts you dislike</span>
             </div>
             <div className="flex items-center">
-              <ExternalLink className="h-4 w-4 mr-1 text-blue-600" />
+              <ExternalLink className="mr-1 h-4 w-4 text-blue-600" />
               <span>Click to preview it in action</span>
             </div>
-            <div className="  w-fit mx-auto rounded-md border border-border bg-primary text-primary-foreground px-2 py-1">
+            <div className="mx-auto w-fit rounded-md border border-border bg-primary px-2 py-1 text-primary-foreground">
               {remainingVotes} of {MAX_VOTES} votes remaining
             </div>
           </div>
         </div>
 
         {!VOTING_ENABLED && (
-          <div className="container mx-auto p-4 flex flex-col gap-4">
+          <div className="container mx-auto flex flex-col gap-4 p-4">
             <Alert variant="destructive">
               <AlertTitle className="flex items-center gap-2">
                 <AlertCircle />
@@ -462,7 +466,7 @@ export default function FontVotingPage() {
 
         {/* Tag filtering section */}
         <div className="mb-6">
-          <div className="flex items-center justify-between mb-2">
+          <div className="mb-2 flex items-center justify-between">
             <h2 className="text-lg font-medium">Filter by Tags</h2>
             <Button
               variant="ghost"
@@ -470,26 +474,26 @@ export default function FontVotingPage() {
               onClick={clearTagFilters}
               className={cn(
                 "h-8 px-2 text-xs",
-                selectedTags.length === 0 && "hidden"
+                selectedTags.length === 0 && "hidden",
               )}
             >
-              <X className="h-3 w-3 mr-1" />
+              <X className="mr-1 h-3 w-3" />
               Clear filters
             </Button>
           </div>
-          <div className="flex flex-wrap gap-2 justify-center">
+          <div className="flex flex-wrap justify-center gap-2">
             {allTags.map((tag) => (
               <Badge
                 key={tag.id}
                 variant={
                   selectedTags.includes(tag.name) ? "default" : "outline"
                 }
-                className="cursor-pointer hover:opacity-80 transition-opacity"
+                className="cursor-pointer transition-opacity hover:opacity-80"
                 onClick={() => toggleTag(tag.name)}
               >
                 {tag.name}
                 {selectedTags.includes(tag.name) && (
-                  <X className="h-3 w-3 ml-1" />
+                  <X className="ml-1 h-3 w-3" />
                 )}
               </Badge>
             ))}
@@ -497,12 +501,12 @@ export default function FontVotingPage() {
         </div>
 
         {loading ? (
-          <div className="text-center py-12">
+          <div className="py-12 text-center">
             <div
               className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
               role="status"
             >
-              <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
+              <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !border-0 !p-0 !whitespace-nowrap ![clip:rect(0,0,0,0)]">
                 Loading...
               </span>
             </div>
@@ -512,7 +516,7 @@ export default function FontVotingPage() {
           <>
             {/* Top Fonts Section */}
             <div className="mb-8">
-              <h2 className="text-xl font-semibold mb-4 underline">
+              <h2 className="mb-4 text-xl font-semibold underline">
                 Top {MAX_VOTES} Fonts
               </h2>
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -523,7 +527,7 @@ export default function FontVotingPage() {
             {/* Remaining Fonts Section */}
             {remainingFonts.length > 0 && (
               <div>
-                <h2 className="text-xl font-semibold mb-4 underline">
+                <h2 className="mb-4 text-xl font-semibold underline">
                   Other Fonts
                 </h2>
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">

@@ -1,11 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Eye, PlusCircle, Save } from "lucide-react";
+import { useEffect, useState } from "react";
+
+import { supabase } from "@/lib/supabase";
+
+import { FontPreviewDialog } from "@/components/font-preview-dialog";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -14,11 +19,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { toast } from "@/components/ui/use-toast";
 import { ToastProvider } from "@/components/ui/toast";
-import { supabase } from "@/lib/supabase";
-import { PlusCircle, Save, Eye } from "lucide-react";
-import { FontPreviewDialog } from "@/components/font-preview-dialog";
+import { toast } from "@/components/ui/use-toast";
 
 interface Font {
   id: number;
@@ -46,7 +48,7 @@ export default function AdminPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingFontId, setEditingFontId] = useState<number | null>(null);
   const [selectedTags, setSelectedTags] = useState<Record<number, number[]>>(
-    {}
+    {},
   );
 
   // Simple authentication
@@ -142,8 +144,8 @@ export default function AdminPage() {
         link.onload = () => {
           setFonts((prevFonts) =>
             prevFonts.map((f) =>
-              f.id === font.id ? { ...f, loaded: true } : f
-            )
+              f.id === font.id ? { ...f, loaded: true } : f,
+            ),
           );
         };
       });
@@ -246,7 +248,7 @@ export default function AdminPage() {
             };
           }
           return font;
-        })
+        }),
       );
 
       setEditingFontId(null);
@@ -279,8 +281,8 @@ export default function AdminPage() {
   if (!isAuthenticated) {
     return (
       <ToastProvider>
-        <div className="container mx-auto py-16 px-4">
-          <Card className="max-w-md mx-auto">
+        <div className="container mx-auto px-4 py-16">
+          <Card className="mx-auto max-w-md">
             <CardHeader>
               <CardTitle>Admin Authentication</CardTitle>
             </CardHeader>
@@ -309,12 +311,12 @@ export default function AdminPage() {
 
   return (
     <ToastProvider>
-      <div className="container mx-auto py-8 px-4">
-        <h1 className="text-3xl font-bold mb-8">Font Admin Dashboard</h1>
+      <div className="container mx-auto px-4 py-8">
+        <h1 className="mb-8 text-3xl font-bold">Font Admin Dashboard</h1>
 
         <div className="mb-8">
-          <h2 className="text-xl font-semibold mb-4">Manage Tags</h2>
-          <div className="flex gap-2 mb-4">
+          <h2 className="mb-4 text-xl font-semibold">Manage Tags</h2>
+          <div className="mb-4 flex gap-2">
             <Input
               placeholder="New tag name"
               value={newTag}
@@ -322,7 +324,7 @@ export default function AdminPage() {
               className="max-w-xs"
             />
             <Button onClick={addTag}>
-              <PlusCircle className="h-4 w-4 mr-2" />
+              <PlusCircle className="mr-2 h-4 w-4" />
               Add Tag
             </Button>
           </div>
@@ -335,9 +337,9 @@ export default function AdminPage() {
           </div>
         </div>
 
-        <h2 className="text-xl font-semibold mb-4">Manage Fonts</h2>
+        <h2 className="mb-4 text-xl font-semibold">Manage Fonts</h2>
         {loading ? (
-          <div className="text-center py-12">
+          <div className="py-12 text-center">
             <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent"></div>
             <p className="mt-4 text-muted-foreground">Loading fonts...</p>
           </div>
@@ -359,7 +361,7 @@ export default function AdminPage() {
                     <TableCell className="font-medium">{font.name}</TableCell>
                     <TableCell>
                       <div
-                        className="text-xl truncate max-w-[200px]"
+                        className="max-w-[200px] truncate text-xl"
                         style={{
                           fontFamily: font.loaded ? font.name : "system-ui",
                         }}
@@ -378,7 +380,7 @@ export default function AdminPage() {
                     </TableCell>
                     <TableCell>
                       {editingFontId === font.id ? (
-                        <div className="flex flex-wrap gap-2 max-w-[300px]">
+                        <div className="flex max-w-[300px] flex-wrap gap-2">
                           {tags.map((tag) => (
                             <Badge
                               key={tag.id}
@@ -395,7 +397,7 @@ export default function AdminPage() {
                           ))}
                         </div>
                       ) : (
-                        <div className="flex flex-wrap gap-1 max-w-[300px]">
+                        <div className="flex max-w-[300px] flex-wrap gap-1">
                           {font.tags.length > 0 ? (
                             font.tags.map((tag, index) => (
                               <Badge key={index} variant="secondary">
@@ -403,7 +405,7 @@ export default function AdminPage() {
                               </Badge>
                             ))
                           ) : (
-                            <span className="text-muted-foreground text-sm">
+                            <span className="text-sm text-muted-foreground">
                               No tags
                             </span>
                           )}
@@ -417,7 +419,7 @@ export default function AdminPage() {
                             size="sm"
                             onClick={() => saveFontTags(font.id)}
                           >
-                            <Save className="h-4 w-4 mr-1" />
+                            <Save className="mr-1 h-4 w-4" />
                             Save
                           </Button>
                         ) : (

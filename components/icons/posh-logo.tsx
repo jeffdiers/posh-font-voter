@@ -50,6 +50,6 @@ export const PoshLogo = React.forwardRef<SVGSVGElement, IconProps>(
         </defs>
       </svg>
     );
-  }
+  },
 );
 PoshLogo.displayName = "PoshLogo";

@@ -1,5 +1,6 @@
-import React, { useEffect } from "react";
 import "@/styles/pixel.css";
+
+import React, { useEffect } from "react";
 
 export function PixelGridOverlay() {
   useEffect(() => {

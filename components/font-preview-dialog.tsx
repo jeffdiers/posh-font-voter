@@ -1,6 +1,8 @@
 "use client";
 
-import { Font } from "@/app/page";
+import type { Font } from "@/app/page";
+
+import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
   DialogContent,
@@ -8,7 +10,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Badge } from "@/components/ui/badge";
 
 interface FontPreviewDialogProps {
   isOpen: boolean;
@@ -30,19 +31,19 @@ export function FontPreviewDialog({
           <DialogTitle>Font Preview: {font.name}</DialogTitle>
         </DialogHeader>
         <ScrollArea className="max-h-[80vh]">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+          <div className="mt-4 grid grid-cols-1 gap-6 md:grid-cols-2">
             {/* Event Flyer Image on the left */}
-            <div className="bg-muted rounded-lg overflow-hidden flex items-center justify-center">
-              <div className="relative w-full aspect-[3/4] bg-gradient-to-br from-indigo-500 to-purple-700 flex items-center justify-center">
+            <div className="flex items-center justify-center overflow-hidden rounded-lg bg-muted">
+              <div className="relative flex aspect-[3/4] w-full items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-700">
                 <div
-                  className="absolute inset-0 flex flex-col items-center justify-center p-6 text-white text-center"
+                  className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center text-white"
                   style={{ fontFamily: font.name }}
                 >
-                  <p className="text-xl mb-2">PRESENTING</p>
-                  <h2 className="text-4xl font-bold mb-4">
+                  <p className="mb-2 text-xl">PRESENTING</p>
+                  <h2 className="mb-4 text-4xl font-bold">
                     ANNUAL DESIGN CONFERENCE
                   </h2>
-                  <p className="text-lg mb-6">
+                  <p className="mb-6 text-lg">
                     FEATURING THE LATEST TRENDS IN TYPOGRAPHY
                   </p>
                   <p className="text-xl">JUNE 15-18, 2023</p>
@@ -83,17 +84,17 @@ export function FontPreviewDialog({
                 <div className="text-base">
                   Join us for an immersive experience exploring the art and
                   science of typography. From classic serifs to modern sans,
-                  we'll dive deep into what makes great typography work.
+                  we&apos;ll dive deep into what makes great typography work.
                 </div>
               </div>
 
               {/* Display tags if available */}
               {font.tags && font.tags.length > 0 && (
                 <div className="space-x-2">
-                  <h3 className="text-sm font-medium text-muted-foreground mb-2">
+                  <h3 className="mb-2 text-sm font-medium text-muted-foreground">
                     Tags
                   </h3>
-                  <div className="flex flex-wrap gap-1 mb-4">
+                  <div className="mb-4 flex flex-wrap gap-1">
                     {font.tags.map((tag, index) => (
                       <Badge key={index} variant="secondary">
                         {tag}

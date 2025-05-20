@@ -1,0 +1,22 @@
+{
+  "printWidth": 80,
+  "trailingComma": "all",
+  "semi": true,
+  "importOrder": [
+    "react",
+    "^next/",
+    "^@/public/(.*)$",
+    "^@/lib/(.*)$",
+    "^@/components/(.*)$",
+    "^@/hooks/(.*)$",
+    "^[./]"
+  ],
+  "importOrderSeparation": true,
+  "importOrderSortSpecifiers": true,
+  "plugins": [
+    "@trivago/prettier-plugin-sort-imports",
+    "prettier-plugin-tailwindcss"
+  ],
+  "tailwindStylesheet": "./app/globals.css",
+  "tailwindFunctions": ["clsx", "cva", "tw"]
+}

@@ -191,7 +191,6 @@ export default function EventView() {
 
   // Update theme settings based on query parameters
   useEffect(() => {
-    console.log(searchParams.get("font"));
     if (searchParams.get("font"))
       setSelectedFont(searchParams.get("font") as string);
     if (searchParams.get("aspectRatio"))

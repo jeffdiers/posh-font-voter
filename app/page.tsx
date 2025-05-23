@@ -138,12 +138,10 @@ export default function FontVotingPage() {
       });
 
       // Process font tags
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       fontTagsData.forEach((fontTag: any) => {
         const fontId = fontTag.font_id;
         const tag = fontTag.tags;
-
-        // console.log(fontId);
-        // console.log(tag.name);
 
         if (tag && fontId) {
           const fontIndex = processedFonts.findIndex((f) => f.id === fontId);

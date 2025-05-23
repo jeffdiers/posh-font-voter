@@ -138,21 +138,24 @@ export default function FontVotingPage() {
       });
 
       // Process font tags
-      fontTagsData.forEach(
-        (fontTag: { font_id: number; tags: { name: string }[] }) => {
-          const fontId = fontTag.font_id;
-          const tag = fontTag.tags;
+      fontTagsData.forEach((fontTag: any) => {
+        const fontId = fontTag.font_id;
+        const tag = fontTag.tags;
 
-          if (tag && fontId) {
-            const fontIndex = processedFonts.findIndex((f) => f.id === fontId);
-            if (fontIndex !== -1) {
-              if (!processedFonts[fontIndex].tags) {
-                processedFonts[fontIndex].tags = tag.map((t) => t.name);
-              }
+        // console.log(fontId);
+        // console.log(tag.name);
+
+        if (tag && fontId) {
+          const fontIndex = processedFonts.findIndex((f) => f.id === fontId);
+          if (fontIndex !== -1) {
+            if (!processedFonts[fontIndex].tags) {
+              processedFonts[fontIndex].tags = [tag.name];
+            } else {
+              processedFonts[fontIndex].tags.push(tag.name);
             }
           }
-        },
-      );
+        }
+      });
 
       setFonts(processedFonts);
       setUserVotes(userVotesMap);
@@ -447,7 +450,7 @@ export default function FontVotingPage() {
               <ExternalLink className="mr-1 h-4 w-4 text-blue-600" />
               <span>Click to preview it in action</span>
             </div>
-            <div className="mx-auto w-fit rounded-md border border-border bg-primary px-2 py-1 text-primary-foreground">
+            <div className="mx-auto w-fit rounded-md border border-border bg-primary px-2 py-1 text-primary-foreground transition-all duration-1000 starting:opacity-0">
               {remainingVotes} of {MAX_VOTES} votes remaining
             </div>
           </div>
